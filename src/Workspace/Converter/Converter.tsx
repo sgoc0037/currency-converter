@@ -14,7 +14,6 @@ interface changeEffectHandler {
 export const Converter: FC = () => {
 
     const listOfCurrency = useAppSelector(state => state.defaultSlice.listOfCurrency)
-    const defaultCurrencies = useAppSelector(state => state.defaultSlice.defaultCurrencies)
     const dispatch = useAppDispatch()
 
     const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormData>();

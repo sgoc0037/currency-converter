@@ -2,23 +2,42 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { getCurrency } from '../DAL/request';
 
-const initialState = {
-    oneInput: 0,
-    secondInput: 0,
-    oneSelect: '',
-    secondSelect: '',
-    currentCurrency: {}
+
+export interface sendCurrentCurrencies {
+    oneType: string,
+    secondType: string,
+}
+interface workCurrencies extends sendCurrentCurrencies {
+    oneValue: number,
+    secondValue: number
+}
+interface currencyState {
+    oneInput: string,
+    secondInput: string,
+    workCurrencies: workCurrencies
 }
 
-export const currencyFetch = createAsyncThunk(
+const initialState: currencyState = {
+    oneInput: '',
+    secondInput: '',
+    workCurrencies: {
+        oneType: 'RUB',
+        secondType: 'USD',
+        oneValue: 0,
+        secondValue: 0,
+    }
+}
+
+export const currencyFetch = createAsyncThunk<object, sendCurrentCurrencies, { rejectValue: string }>(
     'currentCurrencies/currencyFetch',
-    async ({one:string,second}, rejectWithValue) => {
+    async ({ oneType, secondType }, {rejectWithValue}) => {
         try {
-            const response = await getCurrency({one,second})
-            return response.data
+            
         } catch (error) {
-            return rejectWithValue(error.message)
+            rejectWithValue('Error')
         }
+        const response = await getCurrency({ oneType, secondType })
+        return response.data
     }
 )
 
@@ -33,19 +52,20 @@ const currencySlice = createSlice({
             state.secondInput = action.payload
         },
         setOneSelect: (state, action) => {
-            state.oneSelect = action.payload
+            state.workCurrencies.oneType = action.payload
         },
         setSecondSelect: (state, action) => {
-            state.secondSelect = action.payload
+            state.workCurrencies.secondType = action.payload
         },
     },
-    extraReducers: {
-        [currencyFetch.fulfilled]: (state, action) => {
-            state.currencySlice.currentCurrency = action.payload
-        },
-        [currencyFetch.rejected]: (state, action) => {
-            console.log(action.payload)
-        }
+    extraReducers: (builder) => {
+        builder
+            .addCase(currencyFetch.fulfilled, (state, action) => {
+                console.log(action.payload)
+            })
+            .addCase(currencyFetch.rejected, (state, action) => {
+                console.log(action.payload)
+            })
     }
 })
 
