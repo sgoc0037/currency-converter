@@ -1,23 +1,21 @@
 import React from 'react'
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { currencyFetch } from '../Reducers/currencySlice';
-import { defaultFetch } from '../Reducers/defaultSlice';
+import { currencyFetch, testCurrentCurrency } from '../Reducers/currencySlice';
+import { defaultFetch, testSetAllCurrencies } from '../Reducers/defaultSlice';
+import { getTestAllCurrencies, getTestCurrentCurrency } from '../Test/test';
 import { Converter } from './Converter/Converter';
 
 export const Workspace = () => {
 
     const dispatch = useAppDispatch()
 
-    const arrayCurrency = useAppSelector(state => state.defaultSlice.listOfCurrency)
-    console.log(arrayCurrency)
-
     useEffect(() => {
-        dispatch(defaultFetch())
-        dispatch(currencyFetch({oneType:'RUB',secondType:'USD'}))
+        dispatch(testSetAllCurrencies(getTestAllCurrencies)) //<--- it's place for defaultFetch()
+        dispatch(testCurrentCurrency(getTestCurrentCurrency)) //<-- it's place for currencyFetch({oneType:'RUB',secondType:'USD'})
     }, [dispatch])
 
     return <div>
-        {/* <Converter /> */}
+        <Converter />
     </div>
 }

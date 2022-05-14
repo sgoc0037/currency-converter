@@ -1,10 +1,12 @@
 import React from 'react'
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Input } from '../../reComponent/input'
 import { Select } from '../../reComponent/select';
+import { currencyInput, setOneInput, setOneSelect, setSecondInput, setSecondSelect } from '../../Reducers/currencySlice';
 import { defaultCurrencies } from '../../Types/types';
 
 interface changeEffectHandler {
@@ -12,40 +14,65 @@ interface changeEffectHandler {
 }
 
 export const Converter: FC = () => {
-
-    const listOfCurrency = useAppSelector(state => state.defaultSlice.listOfCurrency)
     const dispatch = useAppDispatch()
+    const listOfCurrency = useAppSelector(state => state.defaultSlice.listOfCurrency)
+    const oneInput = useAppSelector(state => state.currencySlice.oneInput)
+    const secondInput = useAppSelector(state => state.currencySlice.secondInput)
+    const oneType = useAppSelector(state => state.currencySlice.workCurrencies.oneType)
+    const secondType = useAppSelector(state => state.currencySlice.workCurrencies.secondType)
+    const oneRate = useAppSelector(state => state.currencySlice.workCurrencies.oneRate)
+    const secondRate = useAppSelector(state => state.currencySlice.workCurrencies.secondRate)
 
-    const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormData>();
+    const [toggle, setToggle] = useState<boolean>(true) //<--- True === oneInput/False === secondInput
 
-    // const oneInputCurrency = defaultCurrencies.USD_RUB
-    // const secondInputCurrency = defaultCurrencies.RUB_USD
-    const oneInputCurrency = 0
-    const secondInputCurrency = 0
+    const handlerForOneSelect = (value: string) => {
+        dispatch(setOneSelect(value))
+    }
+    const handlerForSecondSelect = (value: string) => {
+        dispatch(setSecondSelect(value))
+    }
 
-    const [oneInput, setOneInput] = useState<number>(oneInputCurrency);
-    const [secondInput, setSecondInput] = useState<number>(secondInputCurrency);
-    const [oneSelect, setOneSelect] = useState<string>('USD');
-    const [secondSelect, setSecondSelect] = useState<string>('RUB');
+    const counting = (count: number, rate: number) => {
+        return Math.floor(count * rate * 100) / 100
+    }
+
+    const { register, handleSubmit, formState: { errors } } = useForm<currencyInput>();
 
     const changeHandlerTest = handleSubmit(data => {
-        console.log(oneSelect, "<-====->", secondSelect)
-        console.log(listOfCurrency)
-        console.log(oneInput)
+        console.log(data)
+        if (toggle) {
+            dispatch(setSecondInput(counting(+data.oneInput, oneRate)))
+        } else if (!toggle) {
+            dispatch(setOneInput(counting(+data.secondInput, secondRate)))
+        }
     })
 
-    return <form onChange={changeHandlerTest}>
-        <Input currency={oneInput}
-            setCurrency={setOneInput}
-        ></Input>
-        <Select currentCurrency={oneSelect}
-            setValue={setOneSelect}
-        ></Select>
-        <Input currency={secondInput}
-            setCurrency={setSecondInput}
-        ></Input>
-        <Select currentCurrency={secondSelect}
-            setValue={setSecondSelect}
-        ></Select>
-    </form>
+    return <>
+        <form onChange={changeHandlerTest}>
+            <div className='one'>
+                <input
+                    type='number'
+                    {...register('oneInput')}
+                    defaultValue={oneInput}
+                    onFocus={() => setToggle(true)}
+                ></input>
+                <Select
+                    setValue={handlerForOneSelect}
+                    currentCurrency={oneType}
+                />
+            </div>
+            <hr />
+            <div className='second'>
+                <input
+                    type='number'
+                    {...register('secondInput')}
+                    defaultValue={secondInput}
+                    onFocus={() => setToggle(false)}
+                ></input>
+                <Select
+                    setValue={handlerForSecondSelect}
+                    currentCurrency={secondType} />
+            </div>
+        </form>
+    </>
 }

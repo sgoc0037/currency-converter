@@ -24,7 +24,11 @@ export const defaultFetch = createAsyncThunk<object, void, { rejectValue: string
 const defaultSlice = createSlice({
     initialState,
     name: 'defaultValues',
-    reducers: {},
+    reducers: {
+        testSetAllCurrencies: (state,action:PayloadAction<object>)=> {
+            state.listOfCurrency = action.payload
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(defaultFetch.fulfilled, (state,action) => {
@@ -36,4 +40,5 @@ const defaultSlice = createSlice({
     }
 })
 
+export const {testSetAllCurrencies} = defaultSlice.actions
 export default defaultSlice.reducer

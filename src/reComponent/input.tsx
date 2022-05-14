@@ -2,7 +2,7 @@ import React from 'react'
 import { FC } from 'react';
 
 interface reInput {
-    currency: number | void,
+    currency: string
     setCurrency: (num: number) => void,
 }
 
