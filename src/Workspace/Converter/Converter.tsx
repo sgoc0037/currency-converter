@@ -39,11 +39,12 @@ export const Converter: FC = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<currencyInput>();
 
     const changeHandlerTest = handleSubmit(data => {
-        console.log(data)
         if (toggle) {
             dispatch(setSecondInput(counting(+data.oneInput, oneRate)))
+            dispatch(setOneInput(data.oneInput))
         } else if (!toggle) {
             dispatch(setOneInput(counting(+data.secondInput, secondRate)))
+            dispatch(setSecondInput(data.secondInput))
         }
     })
 
@@ -53,7 +54,7 @@ export const Converter: FC = () => {
                 <input
                     type='number'
                     {...register('oneInput')}
-                    defaultValue={oneInput}
+                    value={oneInput}
                     onFocus={() => setToggle(true)}
                 ></input>
                 <Select
@@ -66,7 +67,7 @@ export const Converter: FC = () => {
                 <input
                     type='number'
                     {...register('secondInput')}
-                    defaultValue={secondInput}
+                    value={secondInput}
                     onFocus={() => setToggle(false)}
                 ></input>
                 <Select
