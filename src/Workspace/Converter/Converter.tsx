@@ -1,21 +1,16 @@
 import React from 'react'
-import { useEffect } from 'react';
 import { useState } from 'react';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { Input } from '../../reComponent/input'
-import { Select } from '../../reComponent/select';
-import { currencyInput, setOneInput, setOneSelect, setSecondInput, setSecondSelect } from '../../Reducers/currencySlice';
-import { defaultCurrencies } from '../../Types/types';
-
-interface changeEffectHandler {
-    (value: number, setValue: (num: number) => void, currency: number): void
-}
+import { Select } from '../../reComponent/select/select';
+import {
+    currencyInput, setOneInput, setOneSelect, setSecondInput, setSecondSelect
+} from '../../Reducers/currencySlice';
+import style from './Converter.module.css'
 
 export const Converter: FC = () => {
     const dispatch = useAppDispatch()
-    const listOfCurrency = useAppSelector(state => state.defaultSlice.listOfCurrency)
     const oneInput = useAppSelector(state => state.currencySlice.oneInput)
     const secondInput = useAppSelector(state => state.currencySlice.secondInput)
     const oneType = useAppSelector(state => state.currencySlice.workCurrencies.oneType)
@@ -33,10 +28,10 @@ export const Converter: FC = () => {
     }
 
     const counting = (count: number, rate: number) => {
-        return Math.floor(count * rate * 100) / 100
+        return String(Math.floor(count * rate * 100) / 100)
     }
 
-    const { register, handleSubmit, formState: { errors } } = useForm<currencyInput>();
+    const { register, handleSubmit } = useForm<currencyInput>();
 
     const changeHandlerTest = handleSubmit(data => {
         if (toggle) {
@@ -49,22 +44,21 @@ export const Converter: FC = () => {
     })
 
     return <>
-        <form onChange={changeHandlerTest}>
-            <div className='one'>
+        <form className={style.form} onChange={changeHandlerTest}>
+            <div className={style.oneBlock}>
                 <input
+                    className={style.input}
                     type='number'
                     {...register('oneInput')}
                     value={oneInput}
-                    onFocus={() => setToggle(true)}
+                    onFocus={(e) => setToggle(true)}
                 ></input>
                 <Select
                     setValue={handlerForOneSelect}
                     currentCurrency={oneType}
                 />
-            </div>
-            <hr />
-            <div className='second'>
                 <input
+                    className={style.input}
                     type='number'
                     {...register('secondInput')}
                     value={secondInput}

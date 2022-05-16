@@ -1,6 +1,7 @@
 import React from 'react'
 import { FC } from 'react'
-import { useAppSelector } from '../app/hooks'
+import { useAppSelector } from '../../app/hooks'
+import style from './select.module.css'
 
 export interface LSelect {
     setValue: (str: string) => void,
@@ -16,6 +17,7 @@ export const Select: FC<LSelect> = ({ setValue, currentCurrency }) => {
     }
 
     return <select
+    className={style.select}
         value={currentCurrency}
         onChange={changeHandler}>
         {

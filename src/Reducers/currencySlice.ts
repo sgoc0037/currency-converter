@@ -11,6 +11,9 @@ export interface currencyInput {
     oneInput: string,
     secondInput: string,
 }
+interface currencyFetch {
+    [oneValue: string]: number
+}
 interface workCurrencies extends sendCurrentCurrencies {
     oneValue: number,
     secondValue: number,
@@ -34,14 +37,9 @@ const initialState: currencyState = {
     }
 }
 
-export const currencyFetch = createAsyncThunk<object, sendCurrentCurrencies, { rejectValue: string }>(
+export const currencyFetch = createAsyncThunk<currencyFetch, sendCurrentCurrencies>(
     'currentCurrencies/currencyFetch',
-    async ({ oneType, secondType }, { rejectWithValue }) => {
-        try {
-
-        } catch (error) {
-            rejectWithValue('Error')
-        }
+    async ({ oneType, secondType }) => {
         const response = await getCurrency({ oneType, secondType })
         return response.data
     }
@@ -51,16 +49,16 @@ const currencySlice = createSlice({
     initialState,
     name: 'currentCurrencies',
     reducers: {
-        setOneInput: (state, action) => {
+        setOneInput: (state, action:PayloadAction<string>) => {
             state.oneInput = action.payload
         },
-        setSecondInput: (state, action) => {
+        setSecondInput: (state, action:PayloadAction<string>) => {
             state.secondInput = action.payload
         },
-        setOneSelect: (state, action) => {
+        setOneSelect: (state, action:PayloadAction<string>) => {
             state.workCurrencies.oneType = action.payload
         },
-        setSecondSelect: (state, action) => {
+        setSecondSelect: (state, action:PayloadAction<string>) => {
             state.workCurrencies.secondType = action.payload
         },
         testCurrentCurrency: (state, action) => {
@@ -73,13 +71,14 @@ const currencySlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(currencyFetch.fulfilled, (state, action) => {
-                console.log(action.payload)
-            })
-            .addCase(currencyFetch.rejected, (state, action) => {
-                console.log(action.payload)
-            })
+        builder.addCase(currencyFetch.fulfilled, (state, action) => {
+            const oneValue = Object.keys(action.payload)[0]
+            const secondValue = Object.keys(action.payload)[1]
+            state.workCurrencies.oneType = oneValue.slice(0, 3)
+            state.workCurrencies.secondType = secondValue.slice(0, 3)
+            state.workCurrencies.oneRate = action.payload[oneValue]
+            state.workCurrencies.secondRate = action.payload[secondValue]
+        })
     }
 })
 

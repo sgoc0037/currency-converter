@@ -1,0 +1,10 @@
+.select {
+    display: inline-block;
+    margin: 0 10px;
+    border: 2px solid #71b6d5;
+    border-radius: 5px;
+    padding: 0.7em 2em;
+    line-height: 1.43;
+    font-size: 20px;
+    font-weight: bold;
+}
