@@ -1,4 +1,5 @@
 import React from 'react'
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
@@ -18,6 +19,11 @@ export const Converter: FC = () => {
     const oneRate = useAppSelector(state => state.currencySlice.workCurrencies.oneRate)
     const secondRate = useAppSelector(state => state.currencySlice.workCurrencies.secondRate)
 
+    useEffect(() => {
+        changeHandler()
+    }, [oneRate,secondRate])
+    
+
     const [toggle, setToggle] = useState<boolean>(true) //<--- True === oneInput/False === secondInput
 
     const handlerForOneSelect = (value: string) => {
@@ -33,7 +39,8 @@ export const Converter: FC = () => {
 
     const { register, handleSubmit } = useForm<currencyInput>();
 
-    const changeHandlerTest = handleSubmit(data => {
+    const changeHandler = handleSubmit(data => {
+        console.log('das')
         if (toggle) {
             dispatch(setSecondInput(counting(+data.oneInput, oneRate)))
             dispatch(setOneInput(data.oneInput))
@@ -44,7 +51,7 @@ export const Converter: FC = () => {
     })
 
     return <>
-        <form className={style.form} onChange={changeHandlerTest}>
+        <form className={style.form} onChange={changeHandler}>
             <div className={style.oneBlock}>
                 <input
                     className={style.input}

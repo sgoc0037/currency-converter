@@ -17,9 +17,14 @@ export const Workspace = () => {
         dispatch(testCurrentCurrency(getTestCurrentCurrency)) //<-- it's place for currencyFetch({oneType:'RUB',secondType:'USD'})
     }, [dispatch])
 
-    // useEffect(()=> {
-    //     dispatch(currencyFetch({oneType,secondType}))
-    // },[oneType,secondType])
+    useEffect(()=> {
+        dispatch(defaultFetch())
+        dispatch(currencyFetch({oneType:'RUB',secondType:'USD'}))
+    },[dispatch])
+
+    useEffect(()=> {
+        dispatch(currencyFetch({oneType,secondType}))
+    },[oneType,secondType])
 
     return <div>
         <Converter />
